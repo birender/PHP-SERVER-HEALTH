@@ -3,6 +3,7 @@
 set -euo pipefail
 [ "$(id -u)" -eq 0 ] || { echo "Run as root"; exit 1; }
 command -v php >/dev/null || { echo "PHP CLI not found"; exit 1; }
+php -r 'exit(version_compare(PHP_VERSION, "8.0.0", ">=") ? 0 : 1);' || { echo "PHP 8.0 or newer is required"; exit 1; }
 
 DEST=/opt/php-server-health
 SRC="$(cd "$(dirname "$0")" && pwd)"

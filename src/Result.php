@@ -11,10 +11,10 @@ final class Result
     public const UNKNOWN = 3;
 
     public function __construct(
-        public readonly string $name,
-        public readonly int $status,
-        public readonly string $message,
-        public readonly array $metrics = []
+        public string $name,
+        public int $status,
+        public string $message,
+        public array $metrics = []
     ) {}
 
     public function label(): string

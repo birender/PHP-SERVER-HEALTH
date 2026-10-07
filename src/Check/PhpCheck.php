@@ -13,7 +13,7 @@ final class PhpCheck implements CheckInterface
     {
         $out = [];
 
-        $min = $this->cfg['min_version'] ?? '8.1.0';
+        $min = $this->cfg['min_version'] ?? '8.0.0';
         $out[] = new Result(
             'php:version',
             version_compare(PHP_VERSION, $min, '>=') ? Result::OK : Result::WARN,

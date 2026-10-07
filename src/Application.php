@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace ServerHealth;
 
+use ServerHealth\Tune\TuneCommand;
 use ServerHealth\Check\{CheckInterface, DiskCheck, LoadCheck, MemoryCheck, PhpCheck, ServiceCheck, UptimeCheck};
 
 final class Application
@@ -15,12 +16,13 @@ final class Application
         'disk'     => ['paths' => ['/'], 'warn' => 80, 'crit' => 90],
         'uptime'   => ['recent_reboot_seconds' => 300],
         'services' => ['services' => []],
-        'php'      => ['min_version' => '8.1.0', 'required_extensions' => ['json', 'mbstring']],
+        'tuning'   => ['reserve_percent' => 30, 'fpm_share' => 0.8, 'max_children_cap' => 500, 'fpm_assumed_worker_mb' => 40],
+        'php'      => ['min_version' => '8.0.0', 'required_extensions' => ['json', 'mbstring']],
     ];
 
     public function run(array $argv): int
     {
-        $opts = getopt('hvc:f:', ['help', 'version', 'config:', 'format:', 'no-color']);
+        $opts = getopt('hvc:f:', ['help', 'version', 'config:', 'format:', 'no-color', 'tune', 'only:', 'pool:', 'php-ini:', 'apache-dir:']);
 
         if (isset($opts['h']) || isset($opts['help'])) {
             echo $this->help();
@@ -48,12 +50,17 @@ final class Application
             return 3;
         }
 
+        $color = !isset($opts['no-color']) && function_exists('posix_isatty') && posix_isatty(STDOUT);
+
+        if (isset($opts['tune'])) {
+            return (new TuneCommand())->run($config['tuning'], $opts, $format, $color);
+        }
+
         $results = [];
         foreach ($this->checks($config) as $check) {
             array_push($results, ...$check->run());
         }
 
-        $color = !isset($opts['no-color']) && function_exists('posix_isatty') && posix_isatty(STDOUT);
         echo $format === 'json' ? Reporter::json($results) : Reporter::text($results, $color);
 
         return Reporter::overall($results); // 0 OK, 1 WARN, 2 CRIT, 3 UNKNOWN
@@ -107,10 +114,19 @@ Usage: php-server-health [options]
   -c, --config FILE   JSON config (default: /etc/php-server-health.json)
   -f, --format FMT    text (default) or json
       --no-color      Disable colored output
+
+Tuning mode (suggests PHP-FPM / Apache settings from this server's RAM and CPU):
+      --tune          Analyze configs and print recommendations (changes nothing)
+      --only WHAT     fpm, apache or all (default all)
+      --pool FILE     PHP-FPM pool file (default: auto-detect /etc/php/*/fpm/pool.d/*.conf)
+      --php-ini FILE  php.ini used by FPM (default: auto-detect)
+      --apache-dir D  Apache config dir (default: /etc/apache2 or /etc/httpd)
+
   -v, --version       Show version
   -h, --help          Show this help
 
 Exit codes: 0 OK, 1 WARN, 2 CRIT, 3 UNKNOWN/error
+(with --tune: 0 nothing to change, 1 changes suggested, 2 risky setting, 3 usage error)
 
 TXT;
     }
