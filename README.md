@@ -6,6 +6,7 @@ Checks: uptime, load (per core), memory/swap, disk usage, PHP version/extensions
 
 ## Install
 **Script:** `sudo ./install.sh [--with-timer]`
+
 **Composer:** `composer require yourvendor/php-server-health` then `vendor/bin/php-server-health`
 
 ## Usage
