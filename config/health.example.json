@@ -1,0 +1,35 @@
+{
+    "load": {
+        "warn": 0.7,
+        "crit": 1.0
+    },
+    "memory": {
+        "warn": 80,
+        "crit": 90
+    },
+    "disk": {
+        "paths": [
+            "/",
+            "/var"
+        ],
+        "warn": 80,
+        "crit": 90
+    },
+    "services": {
+        "services": [
+            "nginx",
+            "php8.3-fpm",
+            "mysql",
+            "apache"
+        ]
+    },
+    "php": {
+        "min_version": "8.1.0",
+        "required_extensions": [
+            "json",
+            "mbstring",
+            "curl",
+            "pdo"
+        ]
+    }
+}

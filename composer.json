@@ -1,0 +1,9 @@
+{
+    "name": "yourvendor/php-server-health",
+    "description": "Lightweight Linux server health checker written in PHP",
+    "type": "library",
+    "license": "MIT",
+    "require": { "php": ">=8.1" },
+    "autoload": { "psr-4": { "ServerHealth\\": "src/" } },
+    "bin": ["bin/php-server-health"]
+}

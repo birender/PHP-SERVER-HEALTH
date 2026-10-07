@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+if (PHP_SAPI !== 'cli') {
+    exit("CLI only\n");
+}
+
+$root = dirname(__DIR__);
+$composer = [$root . '/vendor/autoload.php', $root . '/../../autoload.php'];
+$loaded = false;
+foreach ($composer as $file) {
+    if (is_file($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+if (!$loaded) { // standalone fallback, no Composer needed
+    spl_autoload_register(function (string $class) use ($root): void {
+        $prefix = 'ServerHealth\\';
+        if (str_starts_with($class, $prefix)) {
+            $file = $root . '/src/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+            if (is_file($file)) {
+                require $file;
+            }
+        }
+    });
+}
+
+exit((new ServerHealth\Application())->run($argv));

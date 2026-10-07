@@ -1,0 +1,8 @@
+[Unit]
+Description=PHP server health check
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/php-server-health --format=json
+# Exit codes 1 (WARN) / 2 (CRIT) are meaningful, not service failures:
+SuccessExitStatus=1 2
