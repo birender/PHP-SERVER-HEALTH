@@ -1,4 +1,4 @@
-# php-server-health
+# A zero-dependency PHP CLI tool for Linux server health monitoring and performance tuning
 
 Lightweight Linux server health checker in PHP 8.0+. No dependencies.
 
