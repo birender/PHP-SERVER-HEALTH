@@ -1,4 +1,4 @@
-# 🩺 PHP Server Health
+# 🩺 PHP Server Health System
 
 > **Lightweight Linux server health monitoring and performance tuning tool written in pure PHP.**
 
