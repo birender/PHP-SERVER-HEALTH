@@ -23,7 +23,7 @@ final class Reporter
         return implode(PHP_EOL, $lines) . PHP_EOL;
     }
 
-    /** @param Result[] $results */
+    /** @param Result[] $results also return result in json format */
     public static function json(array $results): string
     {
         return json_encode([
